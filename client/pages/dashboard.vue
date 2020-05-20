@@ -3,9 +3,9 @@
     <div class="bg-gray-100 border-b mb-4">
       <div class="container mx-auto">
         <div class="p-4">
-          <nuxt-link to="/login" class="float-right bg-red-500 text-white font-bold text-lg p-3 rounded" @click="logout">
+          <button to="/login" class="float-right bg-red-500 text-white font-bold text-lg p-3 rounded" @click="logout">
             Logout
-          </nuxt-link>
+          </button>
           <h1 class="text-xl font-bold">
             Dashboard of Tikkies for Businesses.
           </h1>
@@ -33,7 +33,10 @@
           <input v-model="description" placeholder="Description" class="p-1 bg-white border w-full">
         </div>
 
-        <button class="my-4 bg-green-500 text-white font-bold text-lg p-1 rounded w-full" @click="addAppointment">Add appointment</button>
+        <button v-if="loading" class="my-4 bg-gray-500 text-white font-bold text-lg p-1 rounded w-full">Loading...</button>
+        <button v-else class="my-4 bg-green-500 text-white font-bold text-lg p-1 rounded w-full" @click="addAppointment">Add appointment</button>
+
+        {{ error }}
       </div>
     </div>
     <hr class="mb-4">
@@ -50,37 +53,63 @@ export default {
   components: {
     Appointment
   },
-  asyncData () {
-    // TODO on start fetch appointment ids
+  async asyncData ({ store, app, $axios }) {
+    if (store.state.business.business === null) {
+      app.router.push('/login')
+    }
+
+    const options = { headers: { 'X-Business-Id': store.state.business.business.businessId } }
+    const appointmentIds = await $axios.$get('http://localhost:17233/appointment', options)
+
     return {
+      error: undefined,
       open: false,
       customerName: '',
       amountInCents: '100',
       description: '',
-      appointmentIds: ['a', 'b', 'c', 'd']
+      appointmentIds
     }
   },
   methods: {
     logout () {
+      this.$store.commit('business/set', null)
+      this.$router.push('/login')
     },
     toggleOpen () {
       this.open = !this.open
     },
-    addAppointment () {
+    async addAppointment () {
       const amountInCents = parseInt(this.amountInCents)
       if (this.customerName.length < 3 || amountInCents < 1 || amountInCents.toString() !== this.amountInCents || this.description.length < 3) {
         return
       }
 
+      this.loading = true
+      this.error = undefined
+
+      // Get data
       const appointmentData = {
+        businessId: this.$store.state.business.business.businessId,
         customerName: this.customerName,
         amountInCents,
         description: this.description
       }
-      this.customerName = ''
-      this.amountInCents = ''
-      this.description = ''
-      console.log('appointment!', appointmentData)
+      console.log(appointmentData)
+
+      try {
+        const appointment = await this.$axios.$post('http://localhost:17233/appointment', appointmentData)
+        console.log(appointment)
+
+        this.appointmentIds.push(appointment.appointmentId)
+
+        this.customerName = ''
+        this.amountInCents = '100'
+        this.description = ''
+      } catch (err) {
+        this.error = err
+      } finally {
+        this.loading = false
+      }
     }
   }
 }
