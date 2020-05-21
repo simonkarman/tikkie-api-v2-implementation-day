@@ -7,7 +7,8 @@
             Tikkies for Businesses
           </h1>
           <h2 class="text-gray-700">
-            Do you have appointments that you want to get paid for? Use Tikkies for Businesses, connect to Tikkie API v2 in seconds, and get paid for your appointments!
+            Do you have appointments that you want to get paid for? Use Tikkies for Businesses, connect to Tikkie API v2 in seconds, and get paid for your appointments!<br>
+            <a class="text-blue-500" target="_blank" href="https://github.com/simonkarman/tikkie-api-v2-implementation-day">Project on Github.com!</a>
           </h2>
         </div>
       </div>

@@ -10,7 +10,8 @@
             Dashboard of Tikkies for Businesses
           </h1>
           <h2 class="text-gray-700">
-            Welcome to your dashboard! You can find the status of all your appointments below!
+            Welcome to your dashboard! You can find the status of all your appointments below!<br>
+            <a class="text-blue-500" target="_blank" href="https://github.com/simonkarman/tikkie-api-v2-implementation-day">Project on Github.com!</a>
           </h2>
         </div>
       </div>
