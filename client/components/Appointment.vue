@@ -29,13 +29,34 @@ export default {
     appointment: {}
   }),
   // TODO: refresh this data
-  async mounted () {
-    const options = { headers: { 'X-Business-Id': this.$store.state.business.business.businessId } }
-    const appointment = await this.$axios.$get(`http://localhost:17233/appointment/${this.id}`, options)
-    console.log(appointment)
+  mounted () {
+    const interval = 5000
+    const refresh = (that) => {
+      const options = { headers: { 'X-Business-Id': that.$store.state.business.business.businessId } }
+      this.$axios.$get(`http://tikkie-businesses.simonkarman.nl:17233/appointment/${that.id}`, options)
+        .then((appointment, error) => {
+          if (error) {
+            console.log('Error while refreshing appointment: ', that.id, error)
+            return
+          }
+          console.log('Refreshed appointment: ', that.id)
+          this.appointment = appointment
+          that.loading = false
+          setTimeout(() => refresh(that), interval)
+        })
+    }
 
-    this.appointment = appointment
-    this.loading = false
+    // Start loop to refresh
+    this.loading = true
+    refresh(this)
+  },
+  computed: {
+    isPaid () {
+      return this.appointment.isPaid
+    },
+    timestamp () {
+      return this.appointment.tikkie.createdDateTime
+    }
   }
 }
 </script>

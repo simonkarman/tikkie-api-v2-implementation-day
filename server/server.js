@@ -20,7 +20,7 @@ MongoClient.connect("mongodb://localhost:27017/tikkie-api-v2-implementation-day"
 
 // Build endpoints
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.get("/health", (req, res, next) => {
     if (mongo) {
@@ -29,15 +29,6 @@ app.get("/health", (req, res, next) => {
         res.send("NO_DATABASE");
     }
 });
-app.get("/abc", async (req, res, next) => {
-    var result = await mongo.collection("abc").find({}).toArray();
-    res.json(result);
-});
-app.post("/abc", async (req, res, next) => {
-    var result = await mongo.collection("abc").insertOne({ time: new Date().toISOString() });
-    res.json(result);
-});
-
 app.post("/business", async (req, res, next) => {
     try {
 
@@ -48,7 +39,7 @@ app.post("/business", async (req, res, next) => {
         }
 
         // subscribe to notification to validate the appToken and apiKey and get the subscriptionId
-        const data = { url: "http://tikkie-businesses.karman.dev/callback" };
+        const data = { url: "http://tikkie-businesses.simonkarman.nl:17233/callback" };
         const config = { headers: { 'API-Key': apiKey, 'X-App-Token': appToken } };
         const subscriptionResponse = await axios.post(`${tikkieUrl}/paymentrequestssubscription`, data, config);
         const { subscriptionId } = subscriptionResponse.data;
@@ -123,11 +114,29 @@ app.post("/appointment", async (req, res, next) => {
 });
 
 app.post("/callback", async (req, res, next) => {
-    // look up subscriptionId in business db to validate we want to listen to it
-    //     and get the business id from it
-    // look for the payment request of that business id in the appointment table
-    // mark appointment as paid (or add counter)
-    res.status(500).json("Not Yet Implemented");
+    console.log('Callback received with ', req.body);
+    const { subscriptionId, notificationType, paymentRequestToken } = req.body;
+    if (notificationType === "PAYMENT") {
+    
+        // look up subscriptionId in business db to validate we want to listen to it
+        //     and get the business id from it
+        const business = await businessCollection.findOne({ subscriptionId });
+
+        if (business) {
+            // look for the payment request of that business id in the appointment table
+            // mark appointment as paid (or add counter)
+            const filter = { businessId: business.businessId, 'tikkie.paymentRequestToken': paymentRequestToken };
+            await appointmentCollection.updateOne(filter, { '$set': { isPaid: true } });
+            console.log('Callback handled succesfully!');
+            
+        } else {
+            console.log('Received notification for subscriptionId=', subscriptionId, ' that could not be found.')
+        }
+
+    } else {
+        console.log('Notification Type:', notificationType, ' is not supported')
+    }
+    res.json("Callback was handled by tikkie-business.simonkarman.nl:17233/callback");
 });
 
 app.get("/appointment", async (req, res, next) => {

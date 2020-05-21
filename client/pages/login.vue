@@ -4,7 +4,7 @@
       <div class="container mx-auto">
         <div class="p-4">
           <h1 class="text-xl font-bold">
-            Tikkies for Businesses.
+            Tikkies for Businesses
           </h1>
           <h2 class="text-gray-700">
             Do you have appointments that you want to get paid for? Use Tikkies for Businesses, connect to Tikkie API v2 in seconds, and get paid for your appointments!
@@ -64,7 +64,7 @@ export default {
       try {
         // Call POST server/business
         const data = { apiKey: this.apiKey, appToken: this.appToken }
-        const business = await this.$axios.$post('http://localhost:17233/business', data)
+        const business = await this.$axios.$post('http://tikkie-businesses.simonkarman.nl:17233/business', data)
         console.log('business was created: ', business)
 
         // if success, set in store and jump to dashboard

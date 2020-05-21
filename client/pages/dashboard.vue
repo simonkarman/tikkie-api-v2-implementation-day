@@ -7,7 +7,7 @@
             Logout
           </button>
           <h1 class="text-xl font-bold">
-            Dashboard of Tikkies for Businesses.
+            Dashboard of Tikkies for Businesses
           </h1>
           <h2 class="text-gray-700">
             Welcome to your dashboard! You can find the status of all your appointments below!
@@ -15,8 +15,8 @@
         </div>
       </div>
     </div>
-    <div class="container mx-auto bg-gray-100 mb-4 p-4">
-      <div class="w-full font-bold text-lg" @click="toggleOpen">Create new appointment</div>
+    <div class="container mx-auto bg-gray-100 border mb-4 p-4">
+      <div class="w-full font-bold text-lg border-b" @click="toggleOpen">Create new appointment</div>
       <div v-if="open">
         <div class="py-4 text-gray-800">
           Name of your customer:<br>
@@ -37,6 +37,9 @@
         <button v-else class="my-4 bg-green-500 text-white font-bold text-lg p-1 rounded w-full" @click="addAppointment">Add appointment</button>
 
         {{ error }}
+      </div>
+      <div v-else class="text-gray-700 pt-4" @click="toggleOpen">
+        Click here to create a new apointment
       </div>
     </div>
     <hr class="mb-4">
@@ -59,11 +62,12 @@ export default {
     }
 
     const options = { headers: { 'X-Business-Id': store.state.business.business.businessId } }
-    const appointmentIds = await $axios.$get('http://localhost:17233/appointment', options)
+    const appointmentIds = await $axios.$get('http://tikkie-businesses.simonkarman.nl:17233/appointment', options)
 
     return {
       error: undefined,
       open: false,
+      loading: false,
       customerName: '',
       amountInCents: '100',
       description: '',
@@ -97,7 +101,7 @@ export default {
       console.log(appointmentData)
 
       try {
-        const appointment = await this.$axios.$post('http://localhost:17233/appointment', appointmentData)
+        const appointment = await this.$axios.$post('http://tikkie-businesses.simonkarman.nl:17233/appointment', appointmentData)
         console.log(appointment)
 
         this.appointmentIds.push(appointment.appointmentId)
@@ -105,6 +109,7 @@ export default {
         this.customerName = ''
         this.amountInCents = '100'
         this.description = ''
+        this.open = false
       } catch (err) {
         this.error = err
       } finally {
