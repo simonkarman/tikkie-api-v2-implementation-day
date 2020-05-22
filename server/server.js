@@ -6,6 +6,7 @@ const uuid = require('uuid').v4;
 const cors = require('cors');
 
 // Define consts
+const baseUrl = process.env.BASE_URL || 'http://www.example.org';
 const tikkieUrl = 'https://api-sandbox.abnamro.com/v2/tikkie';
 
 // Setup Mongo DB Connection
@@ -39,7 +40,7 @@ app.post("/business", async (req, res, next) => {
         }
 
         // subscribe to notification to validate the appToken and apiKey and get the subscriptionId
-        const data = { url: "http://tikkie-businesses.simonkarman.nl:17233/callback" };
+        const data = { url: `${baseUrl}/callback` };
         const config = { headers: { 'API-Key': apiKey, 'X-App-Token': appToken } };
         const subscriptionResponse = await axios.post(`${tikkieUrl}/paymentrequestssubscription`, data, config);
         const { subscriptionId } = subscriptionResponse.data;
@@ -57,11 +58,11 @@ app.post("/business", async (req, res, next) => {
             };
             businessCollection.insertOne(business);
             console.log("successful created business", business);
-            // TODO: add all existing payment requests as appointments to the list ?
-
         } else {
             console.log("using already existing business", business);
         }
+
+        // TODO: add all existing payment requests as appointments to the list ?
 
         // return response with business information (business id) + business id as cookie
         console.log("successful posting business", business);
@@ -187,5 +188,5 @@ app.get("/appointment/:appointmentId", async (req, res, next) => {
 })
 
 app.listen(17233, () => {
- console.log("Server running on port 17233");
+ console.log(`Server running on port 17233 (baseUrl=${baseUrl})`);
 });

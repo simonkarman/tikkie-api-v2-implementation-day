@@ -63,7 +63,7 @@ export default {
     }
 
     const options = { headers: { 'X-Business-Id': store.state.business.business.businessId } }
-    const appointmentIds = await $axios.$get('http://tikkie-businesses.simonkarman.nl:17233/appointment', options)
+    const appointmentIds = await $axios.$get(`${process.env.baseUrl}/appointment`, options)
 
     return {
       error: undefined,
@@ -102,7 +102,7 @@ export default {
       console.log(appointmentData)
 
       try {
-        const appointment = await this.$axios.$post('http://tikkie-businesses.simonkarman.nl:17233/appointment', appointmentData)
+        const appointment = await this.$axios.$post(`${process.env.baseUrl}/appointment`, appointmentData)
         console.log(appointment)
 
         this.appointmentIds.push(appointment.appointmentId)

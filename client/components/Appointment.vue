@@ -28,12 +28,12 @@ export default {
     loading: true,
     appointment: {}
   }),
-  // TODO: refresh this data
   mounted () {
+    // TODO stop timeout when loggin out
     const interval = 5000
     const refresh = (that) => {
       const options = { headers: { 'X-Business-Id': that.$store.state.business.business.businessId } }
-      this.$axios.$get(`http://tikkie-businesses.simonkarman.nl:17233/appointment/${that.id}`, options)
+      this.$axios.$get(`${process.env.baseUrl}/appointment/${that.id}`, options)
         .then((appointment, error) => {
           if (error) {
             console.log('Error while refreshing appointment: ', that.id, error)

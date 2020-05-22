@@ -4,6 +4,9 @@ export default {
     host: '0.0.0.0',
     port: 17232,
   },
+  env: {
+    baseUrl: process.env.BASE_URL || 'http://localhost:17233'
+  },
   mode: 'spa',
   /*
   ** Headers of the page

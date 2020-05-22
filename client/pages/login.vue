@@ -30,6 +30,8 @@
           <input v-model="appToken" placeholder="X-App-Token" value="cc62b5bb-6feb-4f39-a839-9a875710507c" class="p-1 border w-full">
         </div>
 
+        <div class="text-xs text-red-600">Do not use production tokens! This web app is not safe and should not be use for production.</div>
+
         <button v-if="loading" class="my-4 bg-gray-500 text-white font-bold text-lg p-1 rounded w-full">Loading...</button>
         <button v-else class="my-4 bg-green-500 text-white font-bold text-lg p-1 rounded w-full" @click="login">Start now!</button>
 
@@ -65,7 +67,7 @@ export default {
       try {
         // Call POST server/business
         const data = { apiKey: this.apiKey, appToken: this.appToken }
-        const business = await this.$axios.$post('http://tikkie-businesses.simonkarman.nl:17233/business', data)
+        const business = await this.$axios.$post(`${process.env.baseUrl}/business`, data)
         console.log('business was created: ', business)
 
         // if success, set in store and jump to dashboard
