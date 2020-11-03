@@ -21,13 +21,13 @@
         </div>
 
         <div class="py-4 text-gray-800">
-          Your API-Key:<br>
-          <input v-model="apiKey" placeholder="API-Key" value="uNQITnqDPSGhs84BosLA0zOCcTMxRaIg" class="p-1 border w-full">
+          Your X-App-Token:<br>
+          <input v-model="appToken" placeholder="X-App-Token" value="cc62b5bb-6feb-4f39-a839-9a875710507c" class="p-1 border w-full">
         </div>
 
         <div class="py-4 text-gray-800">
-          Your X-App-Token:<br>
-          <input v-model="appToken" placeholder="X-App-Token" value="cc62b5bb-6feb-4f39-a839-9a875710507c" class="p-1 border w-full">
+          Your API-Key:<br>
+          <input v-model="apiKey" placeholder="API-Key" type="password" value="uNQITnqDPSGhs84BosLA0zOCcTMxRaIg" class="p-1 border w-full">
         </div>
 
         <div class="text-xs text-red-600">Do not use production tokens! This web app is not safe and should not be use for production.</div>
